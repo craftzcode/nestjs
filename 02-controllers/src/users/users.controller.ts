@@ -32,6 +32,12 @@ export class UsersController {
     return { id }
   }
 
+  //! Get /users/:id/:postId
+  // @Get(':id/:postId')
+  // findUserPost(@Param('id') id: string, @Param('postId') postId: string) {
+  //   return { id, postId}
+  // }
+
   //! POST /users
   @Post()
   create(@Body() user: {}) {
