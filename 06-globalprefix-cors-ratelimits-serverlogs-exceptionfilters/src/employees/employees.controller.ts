@@ -1,23 +1,29 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Ip,
+  Param,
+  Patch,
+  Post,
   Query
 } from '@nestjs/common'
-import { EmployeesService } from './employees.service'
+import { SkipThrottle, Throttle } from '@nestjs/throttler'
+
 import { CreateEmployeeDto } from './dto/create-employee.dto'
 import { UpdateEmployeeDto } from './dto/update-employee.dto'
-import { SkipThrottle, Throttle } from '@nestjs/throttler'
+import { EmployeesService } from './employees.service'
+import { MyLoggerService } from 'src/my-logger/my-logger.service'
 
 //! To skip the (Rate Limiting) entire this (EmployeesModule)
 @SkipThrottle()
 @Controller('employees')
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
+
+  //! (new MyLoggerService(EmployeesController.name)) Getting the name of (EmployeesController)
+  private readonly logger = new MyLoggerService(EmployeesController.name)
 
   @Post()
   create(@Body() createEmployeeDto: CreateEmployeeDto) {
@@ -27,7 +33,11 @@ export class EmployeesController {
   //! To overwrite the (@SkipThrottle) we are not including this (findAll) on (@SkipThrottle)
   @SkipThrottle({ default: false })
   @Get()
-  findAll(@Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
+  findAll(
+    @Ip() ip: string,
+    @Query('role') role?: 'INTERN' | 'ENGINEER' | 'ADMIN'
+  ) {
+    this.logger.log(`Request for ALL Employees\t${ip}`)
     return this.employeesService.findAll(role)
   }
 

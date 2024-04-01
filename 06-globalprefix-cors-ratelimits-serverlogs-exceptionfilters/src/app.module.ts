@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
+
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { PrismaModule } from './prisma/prisma.module'
 import { EmployeesModule } from './employees/employees.module'
-
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
-import { APP_GUARD } from '@nestjs/core'
+import { MyLoggerModule } from './my-logger/my-logger.module'
+import { PrismaModule } from './prisma/prisma.module'
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { APP_GUARD } from '@nestjs/core'
         ttl: 30000,
         limit: 5
       }
-    ])
+    ]),
+    MyLoggerModule
   ],
   controllers: [AppController],
   providers: [
